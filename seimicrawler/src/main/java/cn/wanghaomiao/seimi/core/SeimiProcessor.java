@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 /**
@@ -43,8 +44,15 @@ public class SeimiProcessor implements Runnable {
         this.interceptors = interceptors;
         this.crawlerModel = crawlerModel;
         this.crawler = crawlerModel.getInstance();
-        workersPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),Constants.BASE_THREAD_NUM*Runtime.getRuntime().availableProcessors(),
-                3,TimeUnit.SECONDS,new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*5),new ThreadPoolExecutor.CallerRunsPolicy());
+        workersPool = new ThreadPoolExecutor(Constants.BASE_THREAD_NUM + Runtime.getRuntime().availableProcessors(), Constants.BASE_THREAD_NUM * Runtime.getRuntime().availableProcessors(),
+                3, TimeUnit.SECONDS, new LinkedBlockingQueue(Constants.BASE_THREAD_NUM * Runtime.getRuntime().availableProcessors() * 10), new ThreadFactory() {
+            private AtomicInteger atomicInteger = new AtomicInteger(0);
+            @Override
+            public Thread newThread(Runnable r) {
+                int count = atomicInteger.incrementAndGet();
+                return new Thread(r,crawlerModel.getCrawlerName().concat("-").concat(String.valueOf(count)));
+            }
+        }, new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     @Override
@@ -52,6 +60,7 @@ public class SeimiProcessor implements Runnable {
         while (true) {
             Request request = null;
             try {
+                logger.debug("{} 还有 {} 待处理任务",crawlerModel.getCrawlerName(),queue.len(crawlerModel.getCrawlerName()));
                 request = queue.bPop(crawlerModel.getCrawlerName());
                 if (request == null) {
                     continue;

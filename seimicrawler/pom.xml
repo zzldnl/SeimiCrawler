@@ -49,6 +49,11 @@
             <version>3.3.2</version>
         </dependency>
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.1</version>
@@ -198,4 +203,11 @@
         </testResources>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>vancloud</id>
+            <name>vancloud</name>
+            <url>http://maven.vancloud.com.cn:8091/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
