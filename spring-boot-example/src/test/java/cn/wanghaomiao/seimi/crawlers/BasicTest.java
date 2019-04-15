@@ -16,7 +16,7 @@ public class BasicTest {
     @Test
     public void startTest(){
 
-        CrawlerCache.consumeRequest(Request.build("http://www.cnblogs.com/","start").setCrawlerName("basic_a"));
+        CrawlerCache.consumeRequest(Request.build("https://www.boluoxs.com/biquge/32/32032/xs15314653.html","start").setCrawlerName("basic_a"));
         try {
             Thread.sleep(1000*30);
         } catch (InterruptedException e) {

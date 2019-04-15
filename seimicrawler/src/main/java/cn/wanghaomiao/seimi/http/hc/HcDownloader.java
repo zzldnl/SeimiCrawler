@@ -75,7 +75,9 @@ public class HcDownloader implements SeimiDownloader {
         currentReqBuilder = HcRequestGenerator.getHttpRequestBuilder(request,crawlerModel);
         currentRequest = request;
         addCookies(request.getUrl(),request.getSeimiCookies());
+        logger.debug("准备请求:{}",request.getUrl());
         httpResponse = hc.execute(currentReqBuilder.build(),httpContext);
+        logger.debug("{}请求结果:{}",request.getUrl(),httpResponse.getStatusLine().getStatusCode());
         return renderResponse(httpResponse,request,httpContext);
     }
 
@@ -110,7 +112,7 @@ public class HcDownloader implements SeimiDownloader {
         }
     }
 
-    private Response renderResponse(HttpResponse httpResponse, Request request, HttpContext httpContext){
+    private Response renderResponse(HttpResponse httpResponse, Request request, HttpContext httpContext) throws Exception{
         Response seimiResponse = new Response();
         HttpEntity entity = httpResponse.getEntity();
         seimiResponse.setSeimiHttpType(SeimiHttpType.APACHE_HC);
@@ -123,6 +125,9 @@ public class HcDownloader implements SeimiDownloader {
             Header referer = httpResponse.getFirstHeader("Referer");
             if (referer!=null){
                 seimiResponse.setReferer(referer.getValue());
+            }
+            if(null==entity.getContentType()){
+                throw new NullPointerException("request contentType is null!");
             }
             String contentTypeStr = entity.getContentType().getValue().toLowerCase();
             if (contentTypeStr.contains("text")||contentTypeStr.contains("json")||contentTypeStr.contains("ajax")){

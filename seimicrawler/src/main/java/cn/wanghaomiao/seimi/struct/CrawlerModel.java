@@ -62,7 +62,7 @@ public class CrawlerModel {
     private boolean useUnrepeated = true;
     private int delay = 0;
     private SeimiHttpType seimiHttpType;
-    private int httpTimeOut;
+    private int httpTimeOut = 15000;
     private CookieStore aphcCookieStore = new BasicCookieStore();
     private CookiesManager okHttpCookiesManager = new CookiesManager();
     private Logger logger = LoggerFactory.getLogger(CrawlerModel.class);

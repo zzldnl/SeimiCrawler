@@ -68,14 +68,16 @@ public class SeimiCrawlerHandler implements Runnable{
                 return;
             }
 
-            SeimiDownloader downloader;
-            if (SeimiHttpType.APACHE_HC.val() == crawlerModel.getSeimiHttpType().val()) {
-                downloader = new HcDownloader(crawlerModel);
-            } else {
+            SeimiDownloader downloader = new HcDownloader(crawlerModel);
+            if (SeimiHttpType.OK_HTTP3.val() == crawlerModel.getSeimiHttpType().val()) {
                 downloader = new OkHttpDownloader(crawlerModel);
             }
 
             Response seimiResponse = downloader.process(request);
+            if(null==seimiResponse){
+                logger.warn("Request={} 没有请求到数据", JSON.toJSONString(request));
+                return;
+            }
             if (StringUtils.isNotBlank(seimiResponse.getContent()) && BodyType.TEXT.equals(seimiResponse.getBodyType())) {
                 Matcher mm = metaRefresh.matcher(seimiResponse.getContent());
                 int refreshCount = 0;

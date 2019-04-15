@@ -30,6 +30,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.nio.charset.Charset;
@@ -42,6 +44,7 @@ import java.util.Map;
  * @since 2016/4/14.
  */
 public class HcRequestGenerator {
+    private static Logger logger = LoggerFactory.getLogger(HcRequestGenerator.class);
     public static RequestBuilder getHttpRequestBuilder(Request request, CrawlerModel crawlerModel) {
         RequestBuilder requestBuilder;
         BaseSeimiCrawler crawler = crawlerModel.getInstance();
@@ -92,6 +95,7 @@ public class HcRequestGenerator {
                     }
                 }
             }
+            logger.debug("{} 请求使用代理 {}",request.getUrl(),crawler.proxy());
             RequestConfig config = RequestConfig.custom().setProxy(crawlerModel.getProxy()).setCircularRedirectsAllowed(true).build();
 
 
